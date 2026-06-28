@@ -28,6 +28,22 @@ public class BookService {
         repository.delete(id);
     }
 
+    public Book getBookByTitle(String title){
+        return repository.getByTitle(title);
+    }
+
+    public Book getAllBooksByAuthor(String author){
+        return repository.getAllByAuthor(author);
+    }
+
+    public Book getAllBooksByYear(int year){
+        return repository.getAllByYear(year);
+    }
+
+    public Book getBookByID(int id){
+        return repository.getByID(id);
+    }
+
     public void updateBook(Book book) {
         validateBook(book);
         if (repository.get(book.getId()) == null) {

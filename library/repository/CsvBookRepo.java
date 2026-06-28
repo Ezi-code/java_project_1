@@ -42,7 +42,7 @@ public class CsvBookRepo implements BookRepo {
     }
 
     @Override
-    public void update(Book book) {
+    public synchronized void update(Book book) {
         ensureFileExists();
         int id = book.getId();
         Book existing  = getByID(id);
@@ -110,14 +110,24 @@ public class CsvBookRepo implements BookRepo {
     }
 
     @Override
-    public void deleteByTitle(String title) {
+    public Book getAllByAuthor(String author) {
+        return getAll().stream().filter(book -> book.getAuthor().equalsIgnoreCase(author)).findFirst().orElse(null);
+    }
+
+    @Override
+    public Book getAllByYear(int year) {
+        return getAll().stream().filter(book -> book.getYear() == year).findFirst().orElse(null);
+    }
+
+    @Override
+    public synchronized void deleteByTitle(String title) {
         List<Book> books = getAll();
         books.removeIf(book -> book.getTitle().equalsIgnoreCase(title));
         rewriteFromList(books);
     }
 
     @Override
-    public void deleteByID(int id) {
+    public synchronized void deleteByID(int id) {
         List<Book> books = getAll();
         books.removeIf(book -> book.getId() == id);
         rewriteFromList(books);

@@ -1,9 +1,10 @@
 package library.model;
 
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class Book {
-    private static int nextId = 1;
+    private static final AtomicInteger nextId = new AtomicInteger(1);
 
     private final int id;
     private String title;
@@ -11,7 +12,7 @@ public class Book {
     private int year;
 
     public Book(String title, String author, int year) {
-        this.id = nextId++;
+        this.id = nextId.getAndIncrement();
         this.title = title;
         this.author = author;
         this.year = year;
@@ -19,12 +20,10 @@ public class Book {
 
     public Book(int id, String title, String author, int year) {
         this.id = id;
+        nextId.updateAndGet(current -> Math.max(current, id));
         this.title = title;
         this.author = author;
         this.year = year;
-        if (id >= nextId) {
-            nextId = id + 1;
-        }
     }
 
     public String getTitle() {

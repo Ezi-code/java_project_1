@@ -20,6 +20,8 @@ public interface BookRepo {
     Book getByID(int id);
 
     Book getByTitle(String title);
+    Book getAllByAuthor(String author);
+    Book getAllByYear(int year);
 
     void deleteByTitle(String title);
 
