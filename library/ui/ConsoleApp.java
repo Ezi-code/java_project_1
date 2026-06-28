@@ -28,9 +28,10 @@ public class ConsoleApp {
             System.out.println("\nLibrary Menu");
             System.out.println("1. List books");
             System.out.println("2. Add book");
-            System.out.println("3. Delete book");
-            System.out.println("4. Run concurrency demo");
-            System.out.println("5. Exit");
+            System.out.println("3. Update book");
+            System.out.println("4. Delete book");
+            System.out.println("5. Run concurrency demo");
+            System.out.println("6. Exit");
             System.out.print("Choose an option: ");
 
             int choice;
@@ -44,9 +45,10 @@ public class ConsoleApp {
             switch (choice) {
                 case 1 -> listBooks();
                 case 2 -> addBook();
-                case 3 -> deleteBook();
-                case 4 -> runConcurrencyDemo();
-                case 5 -> {
+                case 3 -> updateBook();
+                case 4 -> deleteBook();
+                case 5 -> runConcurrencyDemo();
+                case 6 -> {
                     running = false;
                     System.out.println("Goodbye!");
                 }
@@ -94,6 +96,37 @@ public class ConsoleApp {
             System.out.println("Delete request processed.");
         } catch (NumberFormatException ex) {
             System.out.println("Id must be a number.");
+        }
+    }
+
+    private void updateBook() {
+        try {
+            System.out.print("Enter book id: ");
+            String idInput = scanner.nextLine().trim();
+            if (idInput.isEmpty()) {
+                System.out.println("ID cannot be empty.");
+                return;
+            }
+            int id = Integer.parseInt(idInput);
+
+            System.out.print("Enter new title (leave blank to skip): ");
+            String title = scanner.nextLine().trim();
+
+            System.out.print("Enter new author (leave blank to skip): ");
+            String author = scanner.nextLine().trim();
+
+            System.out.print("Enter new year (0 or blank to skip): ");
+            String yearInput = scanner.nextLine().trim();
+            int year = (yearInput.isEmpty()) ? 0 : Integer.parseInt(yearInput);
+
+            // We create a "partial" book object to send to the service
+            Book book = new Book(id, title, author, year);
+            bookService.updateBook(book);
+            System.out.println("Book updated successfully.");
+        } catch (NumberFormatException ex) {
+            System.out.println("Id and Year must be numbers.");
+        } catch (InvalidBookException ex) {
+            System.out.println("Update failed: " + ex.getMessage());
         }
     }
 

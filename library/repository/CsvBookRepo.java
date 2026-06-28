@@ -43,22 +43,28 @@ public class CsvBookRepo implements BookRepo {
 
     @Override
     public void update(Book book) {
-        List<Book> books = getAll();
-        List<String> lines = new ArrayList<>();
-        lines.add("id,title,author,year");
-        boolean updated = false;
-        for (Book existing : books) {
-            if (existing.getId() == book.getId()) {
-                lines.add(formatBook(book));
-                updated = true;
-            } else {
-                lines.add(formatBook(existing));
+        ensureFileExists();
+        int id = book.getId();
+        Book existing  = getByID(id);
+
+        if (existing != null){
+            try {
+
+                if (book.getTitle() != null) {
+                    existing.setTitle(book.getTitle());
+                }
+                if (book.getAuthor() != null) {
+                    existing.setAuthor(book.getAuthor());
+                }
+                if (book.getYear() != 0) {
+                    existing.setYear(book.getYear());
+                }
+            } catch (Exception e) {
+                System.out.println("Error updating book");
             }
+        }else{
+            System.out.println("Book not found");
         }
-        if (!updated) {
-            lines.add(formatBook(book));
-        }
-        writeAll(lines);
     }
 
     @Override
@@ -89,7 +95,8 @@ public class CsvBookRepo implements BookRepo {
         } catch (IOException e) {
             throw new IllegalStateException("Unable to read books from CSV", e);
         }
-        return books;
+
+        return sortById(books);
     }
 
     @Override
@@ -155,5 +162,21 @@ public class CsvBookRepo implements BookRepo {
 
     private String unescape(String value) {
         return value.replace("\\,", ",");
+    }
+
+    private List<Book> sortById(List<Book> books){
+        List<Book> sortedBooks = new ArrayList<>(books);
+        int n = sortedBooks.size();
+
+        for(int i=0;i < n -1 ;i++){
+            for(int j=0;j < n -i -1;j++){
+                if(sortedBooks.get(j).getId() > sortedBooks.get(j+1).getId()){
+                    Book temp = sortedBooks.get(j);
+                    sortedBooks.set(j, sortedBooks.get(j+1));
+                    sortedBooks.set(j+1, temp);
+                }
+            }
+        }
+        return sortedBooks;
     }
 }

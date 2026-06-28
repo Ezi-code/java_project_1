@@ -28,6 +28,13 @@ public class BookService {
         repository.delete(id);
     }
 
+    public void updateBook(Book book) {
+        validateBook(book);
+        if (repository.get(book.getId()) == null) {
+            throw new InvalidBookException("No book found with id " + book.getId());
+        }
+        repository.update(book);
+    }
     public List<Book> getAllBooks() {
         return repository.getAll();
     }
