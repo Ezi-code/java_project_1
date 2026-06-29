@@ -44,6 +44,19 @@ public class BookService {
         return repository.getByID(id);
     }
 
+    public void deleteBookByTitle(String title){
+        try{
+            Book book = repository.getByTitle(title);
+            if(book == null){
+                throw new InvalidBookException("No book found with title " + title);
+            }
+        }catch(InvalidBookException e){
+            throw new InvalidBookException("No book found with title " + title);
+        }
+        repository.deleteByTitle(title);
+
+    }
+
     public void updateBook(Book book) {
         validateBook(book);
         if (repository.get(book.getId()) == null) {
